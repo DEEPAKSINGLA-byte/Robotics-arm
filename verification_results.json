@@ -1,0 +1,35 @@
+{
+  "dataset_copied": false,
+  "dataset_location": "/media/deepak/5415-7117/OCID-dataset/OCID-dataset",
+  "train_expressions": 259839,
+  "train_audit": {
+    "requested_samples": 500,
+    "evaluated_samples": 500,
+    "failed_samples": 0,
+    "unique_targets": 487,
+    "unique_images": 402,
+    "mean_mask_containment": 0.9951132789287339,
+    "mean_bbox_to_tight_mask_iou": 0.9664010409450992,
+    "seed": 42
+  },
+  "batch_test": {
+    "batch_size": 2,
+    "image_shape": [2, 3, 384, 512],
+    "mask_shape": [2, 1, 384, 512],
+    "depth_loaded": false,
+    "pcd_loaded": false
+  },
+  "phase2_experiment1_audit": {
+    "requested_samples": 100,
+    "evaluated_samples": 100,
+    "failed_samples": 0,
+    "target_leakage_failures": 0,
+    "candidate_count_min": 4,
+    "candidate_count_mean": 13.86,
+    "candidate_count_max": 22,
+    "candidate_classes_known_ratio_debug_only": 0.8802308802308803,
+    "seed": 42,
+    "candidate_masks_saved": false,
+    "grounding_model_trained": false
+  }
+}

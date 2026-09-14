@@ -1,6 +1,19 @@
-# Phase 1: Storage-Efficient OCID-Ref Data Foundation
+# OCID Phase 1 and Phase 2 Experiment 1
 
-Status: implemented and tested directly against the OCID files on the USB drive.
+Status: Phase 1 and the Phase 2 Experiment 1 data interface are implemented
+and tested directly against the OCID files on the USB drive.
+
+## Current Files
+
+- `phase1_dataset.py`: creates and validates one ground-truth expression-mask
+  pair at a time.
+- `phase2_experiment1.py`: creates every perfect candidate mask in a scene for
+  oracle-candidate language grounding.
+- `verification_results.json`: compact Phase 1 verification results.
+- `requirements.txt`: minimal Python packages.
+
+The OCID dataset and expression JSON files remain on the USB drive. They are
+not copied into this repository.
 
 ## Purpose
 
@@ -407,9 +420,9 @@ Phase 1 is complete when:
 7. Split overlap is measured before model training.
 8. This README matches the implementation.
 
-## Next Phase Boundary
+## Phase 2 Experiments
 
-Phase 2 starts with two separate experiments:
+Phase 2 is divided into two experiments:
 
 ```text
 Oracle experiment:
@@ -423,9 +436,83 @@ predicted masks + expression -> select target mask
 This separation reveals whether an error comes from visual segmentation or
 language grounding.
 
+## Phase 2 Experiment 1: Oracle-Candidate Grounding
+
+`phase2_experiment1.py` implements the storage-efficient data interface for the
+first experiment:
+
+```text
+RGB image + referring expression + every ground-truth candidate mask
+                              |
+                              v
+                  grounding model selects one candidate
+                              |
+                              v
+             compare selected index with target supervision
+```
+
+For each expression, the code opens the original integer label PNG and obtains
+all foreground IDs except background ID 0. It creates one Boolean candidate
+mask per ID in RAM. No candidate-mask files are saved.
+
+The returned `model_inputs` are:
+
+```text
+image                 RGB tensor [3, H, W]
+sentence              the referring expression
+candidate_masks       Boolean tensor [N, H, W]
+candidate_boxes       pixel boxes [N, 4]
+candidate_geometry    normalized box, centre, and area [N, 7]
+```
+
+The true `scene_instance_id`, target index, target class, and target mask are
+not model inputs. They are kept separately under `supervision` or
+`debug_metadata`. During training, the model predicts one of the N candidate
+positions and the target candidate index is used only to calculate the loss.
+
+This separation prevents the correct answer from leaking into the model. The
+candidate ID values and ground-truth class names are provided only as debugging
+metadata and must not be passed to the grounding model.
+
+Run a single-sample check:
+
+```text
+cd /home/deepak/OCID_Phase1
+python3 phase2_experiment1.py \
+  --annotations /media/deepak/5415-7117/train_expressions.json \
+  --ocid-root /media/deepak/5415-7117/OCID-dataset/OCID-dataset \
+  --inspect-sample 83152
+```
+
+Run a RAM-only interface audit:
+
+```text
+python3 phase2_experiment1.py \
+  --annotations /media/deepak/5415-7117/train_expressions.json \
+  --ocid-root /media/deepak/5415-7117/OCID-dataset/OCID-dataset \
+  --audit 100 \
+  --seed 42
+```
+
+The audit verifies that every target exists among the candidates, the target
+index selects the exact Phase 1 mask, and target supervision does not appear in
+`model_inputs`.
+
+Important: this code prepares and validates Experiment 1, but it does not yet
+claim language-grounding accuracy. A grounding model must be implemented,
+trained using `model_inputs`, and evaluated against
+`supervision["target_candidate_index"]` before such a score exists.
+
+## Phase 2 Experiment 2: Later Work
+
+Experiment 2 will replace the perfect label-derived candidates with masks
+predicted from RGB. It should be started only after Experiment 1 has a reliable
+grounding score, so segmentation failures can be measured separately from
+language-grounding failures.
+
 ## Maintenance Rule
 
-Whenever Phase 1 behaviour changes:
+Whenever Phase 1 or the Experiment 1 interface changes:
 
 1. Update this Markdown explanation.
 2. Run the sample inspection and audit.
