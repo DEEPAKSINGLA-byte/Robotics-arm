@@ -1,0 +1,18 @@
+{
+  "scope": "Setup verification only; full 300-image experiment not run",
+  "unit_tests_passed": 21,
+  "smoke_training_images": 2,
+  "smoke_training_expressions": 8,
+  "smoke_trainable_expressions": 5,
+  "smoke_missing_targets": 3,
+  "validation_images": 100,
+  "validation_available_targets": 85,
+  "baseline_successes": 58,
+  "baseline_mask_indexes_matching_original_run": 99,
+  "baseline_difference_note": "One close-scoring prediction changed between batched cached-feature evaluation and original single-image evaluation. Both masks have IoU zero. All 100 success/failure outcomes match; aggregate accuracy and mean IoU agree within float32 rounding. Batching/precision is a plausible explanation, not independently proven.",
+  "smoke_epochs_completed": 1,
+  "smoke_best_successes": 58,
+  "baseline_preserved_at_epoch_zero": true,
+  "test_evaluated": false,
+  "sam_or_siglip_trained": false
+}

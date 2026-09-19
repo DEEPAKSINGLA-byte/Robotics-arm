@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OCID · 50 mistakes to understand</title>
+<style>
+:root{font-family:system-ui,sans-serif;color:#182a32;background:#f2f5f5;color-scheme:light}
+*{box-sizing:border-box}body{margin:0}main{max-width:1100px;margin:auto;padding:24px}
+h1{font-size:28px;margin:5px 0 12px}h2{font-size:21px;margin:0 0 12px}p{line-height:1.5}
+.eyebrow{color:#46616d;font-size:13px;letter-spacing:.1em;text-transform:uppercase}.muted{color:#49616c;font-size:14px}
+.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:16px 0}.bar .grow{flex:1}
+button,select,textarea{font:inherit}button,select{padding:10px 14px;border:1px solid #9badb6;border-radius:7px;background:white;color:#182a32}
+button{cursor:pointer}button:disabled{opacity:.45;cursor:default}button.primary{background:#123e50;color:white;border-color:#123e50}
+button:focus-visible,select:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid #007aad;outline-offset:3px}
+.panel{background:white;border:1px solid #d3dfe3;border-radius:12px;padding:20px;margin:16px 0}
+#sentence{font-size:23px;line-height:1.4;overflow-wrap:anywhere}canvas{display:block;width:100%;height:auto;background:#e3e9eb}
+.scene{max-width:960px;margin:12px auto}.legend{display:flex;gap:20px;flex-wrap:wrap;font-weight:600}
+.green{color:#087838}.red{color:#b22031}.crops{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
+.crops canvas{height:180px;width:100%;object-fit:contain;background:#eef2f3}.crops p{margin:4px 0 8px}
+.choices{display:flex;gap:10px;flex-wrap:wrap}.choices label{border:1px solid #c3d0d6;border-radius:6px;padding:10px;cursor:pointer}
+textarea{display:block;width:100%;min-height:85px;margin:8px 0 12px;padding:10px;border:1px solid #9badb6;border-radius:6px}
+details{margin-top:16px}summary{cursor:pointer}#source{overflow-wrap:anywhere}#storage{font-size:13px}#alert{color:#b22031}
+[hidden]{display:none!important}progress{width:100%;height:8px;accent-color:#123e50}.reviewed{padding:10px 0;display:block}
+@media(max-width:600px){main{padding:12px}.panel{padding:14px}h1{font-size:24px}#sentence{font-size:20px}.crops{grid-template-columns:1fr}.bar .grow{flex-basis:100%}button,select{min-height:44px}}
+</style>
+</head>
+<body><main>
+<header><div class="eyebrow">OCID / validation review</div><h1>50 mistakes to understand</h1>
+<p>Read the sentence. Find the object yourself. Then reveal the correct answer and the model’s choice.</p>
+<p class="muted" id="sampling"></p></header>
+<div class="bar"><button id="previous">← Previous</button><label for="jump">Example</label><select id="jump"></select><button id="next" class="primary">Next →</button><span class="grow"></span><span id="progress" aria-live="polite"></span></div>
+<progress id="progressbar" max="50" value="0" aria-label="Examples reviewed"></progress>
+<section class="panel"><div class="eyebrow" id="case-number"></div><p id="sentence"></p>
+<div class="bar"><button id="reveal" class="primary">Reveal answers</button><label id="view-label" for="view" hidden>Show</label><select id="view" hidden><option value="both">Both outlines</option><option value="correct">Correct object only</option><option value="predicted">Model’s choice only</option></select></div>
+<div id="legend" class="legend" hidden><span class="green" id="correct-label"></span><span class="red" id="predicted-label"></span></div>
+<p id="loading" role="status">Loading image…</p><p id="alert" role="alert"></p>
+<div class="scene"><canvas id="scene" role="img" aria-label="Original validation scene"></canvas></div>
+<div class="crops" id="crops" hidden><div><p class="green">Correct object · close-up</p><canvas id="correct-crop" role="img" aria-label="Close-up around correct object"></canvas></div><div><p class="red">Model’s choice · close-up</p><canvas id="predicted-crop" role="img" aria-label="Close-up around model choice"></canvas></div></div>
+<details><summary>Image details</summary><p class="muted" id="source"></p></details></section>
+<section class="panel"><h2>What went wrong?</h2><p class="muted">Choose any that fit. “Not sure” is fine. These are your observations, not a proven cause.</p>
+<div class="choices" id="choices"></div><label for="notes"><p>Your note</p></label><textarea id="notes" placeholder="Example: chose the right-hand box instead of the left-hand box."></textarea>
+<label class="reviewed"><input type="checkbox" id="reviewed"> I have reviewed this example</label><p id="storage" role="status"></p>
+<div class="bar"><button id="previous-bottom">← Previous example</button><button id="next-bottom" class="primary">Next example →</button></div>
+<div class="bar"><button id="download" class="primary">Download my notes</button><button id="import">Load saved notes</button><input type="file" id="import-file" accept=".json,application/json" hidden></div>
+<p class="muted">Download your notes before closing or switching browsers. The download contains your labels and notes, not the images.</p>
+<details><summary>Your review totals</summary><p id="totals"></p></details></section>
+<footer class="muted">No training or internet connection needed. This report contains copies of 50 images for inspection; it does not change the dataset or model. Arrow keys change examples when you are not typing.</footer>
+</main>
+<script id="review-data" type="application/json">__REVIEW_DATA__</script>
+<script>
+'use strict';
+const data=JSON.parse(document.getElementById('review-data').textContent);
+const el=id=>document.getElementById(id), cases=data.cases;
+const categories=['Wrong object type','Wrong colour or shape','Right type, wrong object','Wrong position or relationship','Hard to see / hidden','Unclear sentence / possible label issue','Not sure'];
+const storageKey='ocid-error-review-v1-'+data.metadata.report_id;
+let annotations={}, position=0, revealed=false, currentImage=null, generation=0;
+try{const saved=JSON.parse(localStorage.getItem(storageKey)||'null');if(saved&&saved.report_id===data.metadata.report_id){annotations=saved.annotations||{};position=Math.max(0,Math.min(cases.length-1,saved.position||0));}}catch(e){el('storage').textContent='Browser saving is unavailable. Use Download my notes to keep your work.';}
+for(let i=0;i<cases.length;i++){const o=document.createElement('option');o.value=i;o.textContent=String(i+1)+' / '+cases.length;el('jump').append(o);}
+categories.forEach((category,i)=>{const label=document.createElement('label'),input=document.createElement('input');input.type='checkbox';input.value=category;input.id='category-'+i;input.addEventListener('change',save);label.append(input,document.createTextNode(' '+category));el('choices').append(label);});
+el('sampling').textContent=`${cases.length} different images across ${Object.keys(data.metadata.selected_by_group).length} sequence groups. One mistake per image. Selected for variety—not for estimating overall error rates.`;
+document.title=`OCID · ${cases.length} mistakes to understand`;
+document.querySelector('h1').textContent=`${cases.length} mistakes to understand`;
+el('progressbar').max=cases.length;
+function snapshot(){return {version:1,report_id:data.metadata.report_id,position,annotations};}
+function store(){try{localStorage.setItem(storageKey,JSON.stringify(snapshot()));el('storage').textContent='Saved in this browser. Download a backup to keep or share your notes.';}catch(e){el('storage').textContent='Browser saving is unavailable. Download your notes to keep your work.';}}
+function save(){annotations[cases[position].key]={categories:[...el('choices').querySelectorAll('input:checked')].map(x=>x.value),notes:el('notes').value,reviewed:el('reviewed').checked};store();updateProgress();}
+function updateProgress(){const done=cases.filter(c=>annotations[c.key]?.reviewed).length;el('progress').textContent=`${done} of ${cases.length} reviewed`;el('progressbar').value=done;const counts=categories.map(category=>`${category}: ${cases.filter(c=>annotations[c.key]?.reviewed&&annotations[c.key]?.categories?.includes(category)).length}`);el('totals').textContent=counts.join(' · ')+'. Only reviewed examples are counted; one example can have several labels.';}
+function edge(ctx,runs,color){ctx.fillStyle='#142028';for(const [x,y,n] of runs)ctx.fillRect(x-2,y-2,n+4,5);ctx.fillStyle=color;for(const [x,y,n] of runs)ctx.fillRect(x-1,y-1,n+2,3);}
+function crop(canvas,box){const [x1,y1,x2,y2]=box;const margin=12,sx=Math.max(0,x1-margin),sy=Math.max(0,y1-margin);const sw=Math.min(currentImage.width,x2+margin)-sx,sh=Math.min(currentImage.height,y2+margin)-sy;canvas.width=sw;canvas.height=sh;canvas.getContext('2d').drawImage(currentImage,sx,sy,sw,sh,0,0,sw,sh);}
+function draw(){if(!currentImage)return;const c=cases[position],canvas=el('scene'),ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(currentImage,0,0);if(revealed){if(el('view').value!=='predicted')edge(ctx,c.correct_edge,'#20ef72');if(el('view').value!=='correct')edge(ctx,c.predicted_edge,'#ff3b50');}canvas.setAttribute('aria-label',revealed?'Scene with selected object outlines. Correct answer green; model choice red.':'Original validation scene without answer outlines');}
+function reveal(){revealed=!revealed;el('reveal').textContent=revealed?'Hide answers':'Reveal answers';for(const id of ['legend','view-label','view','crops'])el(id).hidden=!revealed;draw();}
+function render(){const c=cases[position],a=annotations[c.key]||{};generation++;const token=generation;currentImage=null;revealed=false;el('reveal').textContent='Reveal answers';el('reveal').disabled=true;for(const id of ['legend','view-label','view','crops'])el(id).hidden=true;el('view').value='both';el('jump').value=position;el('previous').disabled=position===0;el('next').disabled=position===cases.length-1;el('case-number').textContent=`Example ${position+1} of ${cases.length} · ${c.candidate_count} objects`;el('sentence').textContent='“'+c.sentence+'”';el('correct-label').textContent=`Green = correct object (ID ${c.target_id})`;el('predicted-label').textContent=`Red = model’s choice (ID ${c.predicted_id})`;el('source').textContent=`Sequence: ${c.group} | Image: ${c.scene} | Expression: ${c.key}. An expression key may start with train because that is its original annotation source; this report uses the sequence validation split.`;el('notes').value=a.notes||'';el('reviewed').checked=!!a.reviewed;for(const input of el('choices').querySelectorAll('input'))input.checked=(a.categories||[]).includes(input.value);el('scene').width=c.width;el('scene').height=c.height;el('loading').hidden=false;el('alert').textContent='';const image=new Image();image.onload=()=>{if(token!==generation)return;currentImage=image;el('loading').hidden=true;el('reveal').disabled=false;crop(el('correct-crop'),c.correct_box);crop(el('predicted-crop'),c.predicted_box);draw();};image.onerror=()=>{if(token!==generation)return;el('loading').hidden=true;el('alert').textContent='This image could not load. Reopen the report or regenerate it.';};image.src=c.image;updateProgress();}
+function go(next){if(next<0||next>=cases.length)return;save();position=next;store();render();window.scrollTo(0,0);}
+el('previous-bottom').onclick=()=>go(position-1);el('next-bottom').onclick=()=>go(position+1);
+el('previous').onclick=()=>go(position-1);el('next').onclick=()=>go(position+1);el('jump').onchange=()=>go(Number(el('jump').value));el('reveal').onclick=reveal;el('view').onchange=draw;el('notes').oninput=save;el('reviewed').onchange=save;
+document.addEventListener('keydown',event=>{if(/INPUT|TEXTAREA|SELECT|BUTTON/.test(event.target.tagName)||event.ctrlKey||event.metaKey||event.altKey)return;if(event.key==='ArrowRight'){event.preventDefault();go(position+1);}if(event.key==='ArrowLeft'){event.preventDefault();go(position-1);}});
+el('download').onclick=()=>{save();const report={...snapshot(),exported_at:new Date().toISOString(),metadata:data.metadata,cases:cases.map(c=>({key:c.key,scene:c.scene,sentence:c.sentence,target_id:c.target_id,predicted_id:c.predicted_id,...(annotations[c.key]||{categories:[],notes:'',reviewed:false})}))};const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'}));const link=document.createElement('a');link.href=url;link.download='ocid-review-notes-'+data.metadata.report_id+'.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+el('import').onclick=()=>el('import-file').click();
+el('import-file').onchange=async()=>{const file=el('import-file').files[0];if(!file)return;try{const imported=JSON.parse(await file.text());if(imported.report_id!==data.metadata.report_id||!imported.annotations)throw Error('These notes belong to another report.');const validKeys=new Set(cases.map(c=>c.key));for(const [key,a] of Object.entries(imported.annotations)){if(!validKeys.has(key)||!Array.isArray(a.categories)||!a.categories.every(v=>categories.includes(v))||typeof a.notes!=='string'||typeof a.reviewed!=='boolean')throw Error('The notes file has an invalid entry.');}if(Object.keys(annotations).length&&!confirm('Replace notes currently in this browser with the saved notes?'))return;annotations=imported.annotations;position=0;store();render();}catch(e){el('alert').textContent='Could not load notes: '+e.message;}finally{el('import-file').value='';}};
+render();
+</script></body></html>

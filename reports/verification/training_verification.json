@@ -1,0 +1,50 @@
+{
+  "stage": "frozen SigLIP 2 selector implementation and small learning checks",
+  "full_dataset_training_completed": false,
+  "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 8 GB",
+  "dependencies": {
+    "torch": "2.10.0+cu128",
+    "transformers": "5.15.1",
+    "numpy": "2.2.6",
+    "Pillow": "12.3.0"
+  },
+  "encoder": "google/siglip2-base-patch16-224",
+  "encoder_frozen": true,
+  "feature_cache_id": "4764b544cec72bc7",
+  "trainable_parameters": 2304514,
+  "unit_tests_passed": 5,
+  "sequence_split": {
+    "seed": 42,
+    "group_definition": "collection plus sequence folder; camera views grouped together",
+    "train": {"expressions": 257445, "groups": 55},
+    "val": {"expressions": 24546, "groups": 7},
+    "test": {"expressions": 23703, "groups": 7}
+  },
+  "feature_check": {
+    "train_expressions": 100,
+    "train_scenes": 96,
+    "val_expressions": 100,
+    "val_scenes": 61,
+    "truncated_expressions": 0,
+    "peak_cuda_allocated_gib": 0.7527546882629395
+  },
+  "overfit_check": {
+    "seed": 42,
+    "examples": 100,
+    "best_training_set_accuracy": 0.99,
+    "epochs": 18,
+    "passed": true,
+    "meaning": "Memorization/debugging only; not unseen-data accuracy"
+  },
+  "validation_smoke_check": {
+    "training_examples": 100,
+    "validation_examples": 100,
+    "epochs": 2,
+    "best_validation_accuracy": 0.26,
+    "frozen_similarity_validation_accuracy": 0.44,
+    "reloaded_checkpoint_accuracy": 0.26,
+    "meaning": "Normal training and checkpoint evaluation work; no performance improvement demonstrated"
+  },
+  "test_set_evaluated": false,
+  "dataset_copied": false
+}

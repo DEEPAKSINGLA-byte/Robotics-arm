@@ -1,0 +1,22 @@
+{
+  "run": "runs/final-test-relaxed",
+  "protocol": "full-test-v1",
+  "unit_tests_passed": 27,
+  "expressions": 23703,
+  "images": 220,
+  "successes": 15843,
+  "accuracy": 0.6683964055182888,
+  "proposal_misses": 2358,
+  "selection_misses": 5502,
+  "full_split_fingerprint_verified": true,
+  "train_val_test_keys_images_groups_disjoint": true,
+  "checkpoint_training_groups_contained_in_train": true,
+  "all_expression_ious_independently_recomputed": true,
+  "prediction_keys_match_manifest": true,
+  "predictions_exclude_ground_truth_fields": true,
+  "frozen_selector_copy_byte_identical": true,
+  "sam_selector_siglip_source_hashes_unchanged": true,
+  "test_evaluated": true,
+  "training_performed": false,
+  "model_selection_performed": false
+}

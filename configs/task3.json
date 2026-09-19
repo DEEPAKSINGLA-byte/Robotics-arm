@@ -1,0 +1,24 @@
+{
+  "checkpoint": "runs/sam-adaptation-relaxed-300/best.pt",
+  "checkpoint_sha256": "53dc596172eb6971d175378801a318e86ad01ec438630fe6f9ef2f04b566437b",
+  "sam_path": "models/sam2.1-hiera-tiny",
+  "sam_weights_sha256": "48c14467e5cf9e51870511feb72c89688e82dd74523142c0538b663e193ac2a7",
+  "siglip_path": "models/siglip2-base-patch16-224",
+  "encoder_fingerprint": "b838812ba35982a4a66f527943a9ae73f969c8ed19df27993558ca7ae80c08f6",
+  "depth_head": "runs/depth-scale-ssd-v1/best.pt",
+  "moge_checkpoint": "models/moge-2-vitb-normal/model.pt",
+  "sam_settings": {
+    "points_per_batch": 16,
+    "points_per_crop": 32,
+    "crops_n_layers": 0,
+    "pred_iou_thresh": 0.7,
+    "stability_score_thresh": 0.9,
+    "crops_nms_thresh": 0.7
+  },
+  "filtering": {
+    "min_area": 32,
+    "max_area_fraction": 0.95,
+    "duplicate_iou": 0.95,
+    "max_candidates": 128
+  }
+}

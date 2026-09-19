@@ -1,0 +1,80 @@
+{
+  "seed": 42,
+  "max_epochs": 30,
+  "patience": 5,
+  "protocol": "Fresh initialization; only dropout or width changes; single seed; validation only",
+  "runs": [
+    {
+      "name": "baseline",
+      "hidden": 256,
+      "dropout": 0.1,
+      "parameters": 2304514,
+      "checkpoint": "/home/deepak/OCID_Phase1/runs/regularization-study/baseline/best.pt",
+      "best_accuracy": 0.8171596186751405,
+      "epochs_completed": 12,
+      "debug_overfit": false,
+      "mean_epoch_seconds": 9.523950668083367,
+      "precision": "bf16",
+      "peak_cuda_allocated_gib": 1.204963207244873,
+      "overfit_passed": null,
+      "best_training_eval_accuracy": 0.9599798015110024,
+      "best_generalization_gap": 0.14282018283586184,
+      "best_epoch": 7
+    },
+    {
+      "name": "dropout_030",
+      "hidden": 256,
+      "dropout": 0.3,
+      "parameters": 2304514,
+      "checkpoint": "/home/deepak/OCID_Phase1/runs/regularization-study/dropout_030/best.pt",
+      "best_accuracy": 0.7953638067302208,
+      "epochs_completed": 16,
+      "debug_overfit": false,
+      "mean_epoch_seconds": 9.56191320956259,
+      "precision": "bf16",
+      "peak_cuda_allocated_gib": 1.204963207244873,
+      "overfit_passed": null,
+      "best_training_eval_accuracy": 0.9738041134999709,
+      "best_generalization_gap": 0.1784403067697501,
+      "best_epoch": 11
+    },
+    {
+      "name": "width_128",
+      "hidden": 128,
+      "dropout": 0.1,
+      "parameters": 726274,
+      "checkpoint": "/home/deepak/OCID_Phase1/runs/regularization-study/width_128/best.pt",
+      "best_accuracy": 0.7994785301067384,
+      "epochs_completed": 15,
+      "debug_overfit": false,
+      "mean_epoch_seconds": 4.900509050866579,
+      "precision": "bf16",
+      "peak_cuda_allocated_gib": 1.1129889488220215,
+      "overfit_passed": null,
+      "best_training_eval_accuracy": 0.9596574025520014,
+      "best_generalization_gap": 0.16017887244526297,
+      "best_epoch": 10
+    }
+  ],
+  "best_by_validation": "baseline",
+  "train_expressions": 257445,
+  "train_unique_scenes": 1880,
+  "validation_expressions": 24546,
+  "validation_unique_scenes": 199,
+  "test_evaluated": false,
+  "code_tests_passed": 7,
+  "checkpoint_reload": {
+    "accuracy": 0.8171596186751405,
+    "correct": 20058,
+    "total": 24546,
+    "matches_training_validation_accuracy": true
+  },
+  "decision": "Keep default width 256 and dropout 0.1. Neither regularization variant improved validation or reduced the best-checkpoint train/validation gap in this single-seed comparison.",
+  "caveats": [
+    "This is validation, not test performance.",
+    "The previous 79.20% run was warm-started and is not the controlled baseline.",
+    "Training accuracy is measured on the best checkpoint in evaluation mode with dropout disabled.",
+    "Oracle candidate masks are supplied; this does not measure a segmentation model.",
+    "The test split remains untouched; confirm promising choices across seeds before final testing."
+  ]
+}

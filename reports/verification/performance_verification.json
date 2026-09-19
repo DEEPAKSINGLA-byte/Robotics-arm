@@ -1,0 +1,34 @@
+{
+  "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 8 GB",
+  "training_features": "features/4764b544cec72bc7/sequence-train-bd9c96bbe427.json",
+  "validation_features": "features/4764b544cec72bc7/sequence-val-5f243509242f.json",
+  "benchmark_note": "Short warmup-excluded training measurements, not an accuracy comparison. Different batch sizes change optimizer update count.",
+  "examples_per_second": {
+    "original_32_fp32": 2533.14,
+    "resident_32_fp32": 8773.65,
+    "resident_256_bf16": 29301.25,
+    "resident_512_bf16": 27585.33,
+    "resident_1024_bf16": 25314.62
+  },
+  "selected_batch_size": 256,
+  "full_epoch_check": {
+    "output": "runs/speed-check",
+    "initial_weights": "runs/sequence-stage1/best.pt",
+    "optimizer_restarted": true,
+    "training_samples": 257445,
+    "validation_samples": 24546,
+    "epoch_seconds": 9.421468733000438,
+    "training_seconds_approx": 9.0,
+    "validation_seconds_approx": 0.4,
+    "peak_cuda_allocated_gib": 1.204963207244873,
+    "gpu_utilization_point_samples_during_run_percent": [100,100,54],
+    "device_memory_point_samples_mib": [1431,1431,1433],
+    "utilization_note": "Point samples during training/validation, not an average or guaranteed future utilization.",
+    "initial_bf16_validation_accuracy_rounded": 0.7673,
+    "final_validation_accuracy": 0.7847714495233439,
+    "zero_shot_accuracy_rounded": 0.4359
+  },
+  "unit_tests_passed": 6,
+  "old_runs_preserved": true,
+  "test_set_used": false
+}

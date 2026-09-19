@@ -1,0 +1,6 @@
+# Optional Experiment 2 environment, matching the verified package versions.
+# Keep an existing working CUDA installation; these pins do not select a CUDA wheel index.
+-r requirements.txt
+torch==2.10.0
+torchvision==0.25.0
+transformers==5.15.1

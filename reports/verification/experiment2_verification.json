@@ -1,0 +1,44 @@
+{
+  "samples": 20,
+  "distinct_images": 20,
+  "mean_selected_iou": 0.5079713680521389,
+  "mean_best_available_iou": 0.6970733654776053,
+  "mean_raw_best_iou": 0.6971403354853789,
+  "selected_success_count": 11,
+  "proposal_available_count": 15,
+  "raw_proposal_available_count": 15,
+  "zero_shot_success_count": 6,
+  "failures": {
+    "success": 11,
+    "selection_miss": 4,
+    "proposal_miss": 5
+  },
+  "mean_candidates": 24.15,
+  "mean_proposal_seconds": 2.2096284543000366,
+  "mean_selection_seconds": 0.09411080180016143,
+  "peak_cuda_allocated_gib": 0.8229255676269531,
+  "threshold": 0.5,
+  "wall_seconds": 51.100086009000734,
+  "test_evaluated": false,
+  "training_performed": false,
+  "conditional_selection_success": 0.7333333333333333,
+  "audit": {
+    "images_checked": 20,
+    "independent_mask_iou_replay_passed": true,
+    "predictions_saved_without_target_fields": true,
+    "source_image_hashes_match": true,
+    "sam_and_selector_weight_hashes_unchanged": true,
+    "same_twenty_oracle_mask_correct": 18,
+    "code_tests_passed": 16
+  },
+  "run_directory": "/home/deepak/OCID_Phase1/runs/experiment2-sam21-tiny-20",
+  "initial_settings_not_tuned_to_these_answers": true,
+  "notes": [
+    "20 distinct sequence-validation images, one randomly selected sentence per image; balanced by sequence group.",
+    "IoU >= 0.5 is a diagnostic choice, not a PDF requirement.",
+    "No training, depth input, test evaluation, or modification of old checkpoints.",
+    "Same twenty examples scored 18/20 with the old perfect-mask pipeline; the full 81.72% uses a different sample.",
+    "Raw and retained proposal coverage both 15/20: our additional filters did not cause any threshold-level target-coverage loss in this run.",
+    "Two preliminary failed smoke runs were preserved; the third smoke run and the twenty-image run completed."
+  ]
+}

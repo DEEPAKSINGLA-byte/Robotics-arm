@@ -1,0 +1,33 @@
+# Downloaded encoders and generated training data
+/models/
+/features/
+/splits/
+/runs/
+/data/
+/datasets/
+/OCID-dataset/
+*_expressions.json
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+*.npy
+*.npz
+# Local Python environments and generated files
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.cache/
+.pytest_cache/
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
+
+# Local reports, recovery copies and temporary output (not source documentation)
+/outputs/
+/recovered-ocid/
+/cleanup-backups/
+*.tmp
