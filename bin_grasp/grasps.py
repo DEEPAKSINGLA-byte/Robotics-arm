@@ -13,7 +13,7 @@ import cv2
 import numpy as np
 from PIL import Image
 from scipy.spatial import cKDTree
-from camera_geometry import validate_transform
+from bin_grasp.geometry import validate_transform
 
 
 @dataclass(frozen=True)

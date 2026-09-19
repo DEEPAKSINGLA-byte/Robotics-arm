@@ -1,9 +1,9 @@
 import unittest
 import numpy as np
 from PIL import Image
-from compare_sam_selectors import remaining_index
-from run_experiment2 import select_rows, generate_masks, tiled_boxes
-from run_sam_settings_study import VARIANTS
+from experiments.compare_sam_selectors import remaining_index
+from experiments.run_experiment2 import select_rows, generate_masks, tiled_boxes
+from experiments.run_sam_settings_study import VARIANTS
 from transformers.pipelines.mask_generation import MaskGenerationPipeline
 
 

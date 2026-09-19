@@ -4,7 +4,7 @@ import tempfile
 from pathlib import Path
 import numpy as np
 import torch
-from run_depth_scale import ScaleHead, target_scale, metric, catalog, exclude_training
+from bin_grasp.depth import ScaleHead, target_scale, metric, catalog, exclude_training
 
 
 class DepthScaleTests(unittest.TestCase):

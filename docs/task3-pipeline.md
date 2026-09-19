@@ -115,8 +115,8 @@ successful suction. `robot_execution_ready` remains false.
 
 ```bash
 # Run from the repository folder.
-python3 -B -m unittest test_task3_grasps -v
-python3 -B verify_task3.py \
+python3 -B -m unittest tests.test_task3_grasps -v
+python3 -B -m bin_grasp.verify \
   --data-root /path/to/OCID-dataset \
   --runs /absolute/path/result1 /absolute/path/result2 \
   --output /absolute/path/new-verification-folder

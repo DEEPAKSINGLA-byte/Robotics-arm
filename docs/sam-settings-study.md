@@ -29,7 +29,7 @@ dataset labels. Evaluation success remains measured IoU >= 0.5 for every run.
 
 ```bash
 # Run from the repository folder.
-python3 -B run_sam_settings_study.py --count 20 \
+python3 -B -m experiments.run_sam_settings_study --count 20 \
   --output runs/sam-settings-study-20
 ```
 
@@ -50,7 +50,7 @@ To run only the two promising settings on 99 images and reuse the completed
 original-settings baseline with the adapted selector:
 
 ```bash
-python3 -B run_sam_settings_study.py --count 99 \
+python3 -B -m experiments.run_sam_settings_study --count 99 \
   --variants crops1 relaxed \
   --baseline-run runs/selector-comparison-remaining99/adapted \
   --output runs/sam-settings-two-99

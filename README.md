@@ -70,7 +70,7 @@ python3 -B -m unittest discover -p 'test_*.py'
 To score saved Task 3 predictions against OCID validation labels:
 
 ```bash
-python3 -B verify_task3.py \
+python3 -B -m bin_grasp.verify \
   --data-root /path/to/OCID-dataset \
   --runs outputs/blue-box \
   --output outputs/verification
@@ -81,15 +81,28 @@ This also needs the generated `splits/sequence/val.json`, or an explicit
 
 ## Code and notes
 
-- `run_task3.py`: main image-and-sentence runner.
-- `task3_grasp_proposals.py`: contact proposals and action suggestions.
-- `verify_task3.py`: checks saved results against validation annotations.
-- `grounding_model.py`, `grounding_data.py`: selector and training batches.
-- `candidate_inputs.py`: object crops and position features.
-- `camera_geometry.py`, `experiment_io.py`: shared geometry and file helpers.
-- `run_depth_scale.py`: depth-correction preparation, training and prediction.
-- Other preparation, training and evaluation scripts are kept to reproduce experiments.
-- `test_*.py` and `templates/`: fast checks and report layouts.
+```text
+run_task3.py       Start the demo
+bin_grasp/        Main pipeline, object candidates, depth and grasp code
+experiments/      Dataset preparation, training and evaluation
+tests/            Automated checks
+configs/          Model paths and mask settings
+docs/             Setup, technical draft and experiment notes
+templates/        HTML report layouts
+reports/          Saved verification records
+```
+
+The crop helper and object-candidate code are combined in
+`bin_grasp/candidates.py`. Training and inference use the same crop recipe.
+Model and output folders stay local and are ignored by Git.
+
+Run experiment commands as modules from the repository folder, for example:
+
+```bash
+python3 -B -m experiments.run_stage1 --help
+python3 -B -m bin_grasp.depth --help
+python3 -B -m unittest discover -s tests -p 'test_*.py'
+```
 
 The [technical draft](docs/task3-technical-draft.md) explains the approach in
 simple language. For training details, see [SAM adaptation](docs/sam-adaptation.md),

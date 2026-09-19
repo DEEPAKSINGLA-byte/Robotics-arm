@@ -12,9 +12,9 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 from scipy.spatial import cKDTree
-from task3_grasp_proposals import validate_transform, observed_collision_count
+from bin_grasp.grasps import validate_transform, observed_collision_count
 
-REPO = Path(__file__).resolve().parent
+REPO = Path(__file__).resolve().parents[1]
 
 
 def read(path):

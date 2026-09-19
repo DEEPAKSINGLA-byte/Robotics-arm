@@ -1,8 +1,8 @@
 import unittest
 import numpy as np
-from camera_geometry import (Camera, unproject_pixels, unproject_depth, project_points,
+from bin_grasp.geometry import (Camera, unproject_pixels, unproject_depth, project_points,
                              transform_points, inverse_transform, validate_transform, masked_surface)
-from audit_ocid_geometry import fit_camera, select_training_scenes
+from experiments.audit_ocid_geometry import fit_camera, select_training_scenes
 
 
 class GeometryTests(unittest.TestCase):

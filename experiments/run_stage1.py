@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 def run(script, *arguments, find_index=False):
-    command = [sys.executable, '-B', str(Path(__file__).parent / script), *map(str, arguments)]
+    command = [sys.executable, '-B', '-m', script, *map(str, arguments)]
     process = subprocess.Popen(command, stdout=subprocess.PIPE, text=True)
     index = None
     for line in process.stdout:
@@ -47,10 +47,10 @@ def main():
         raise FileExistsError('Choose a new training output directory')
     split_dir = Path('splits') / args.mode
     if not split_dir.exists():
-        run('prepare_splits.py','--annotations-dir',args.annotations_dir,'--mode',args.mode,'--output',split_dir)
+        run('experiments.prepare_splits','--annotations-dir',args.annotations_dir,'--mode',args.mode,'--output',split_dir)
     indexes = {}
     for split in ('train','val'):
-        indexes[split] = run('extract_siglip_features.py','--manifest',split_dir/f'{split}.json',
+        indexes[split] = run('experiments.extract_siglip_features','--manifest',split_dir/f'{split}.json',
             '--ocid-root',args.ocid_root,'--model',args.model,'--output',args.features,
             '--chunk-size',args.chunk_size,'--device',args.device,find_index=True)
     extras = ['--init-checkpoint',args.init_checkpoint] if args.init_checkpoint else []
@@ -59,17 +59,17 @@ def main():
             extras += ['--'+key,getattr(args,key)]
     if args.report_training_fit:
         extras += ['--report-training-fit']
-    run('train_experiment1.py','--train-features',indexes['train'],'--val-features',indexes['val'],
+    run('experiments.train_experiment1','--train-features',indexes['train'],'--val-features',indexes['val'],
         '--output',args.output,'--epochs',args.epochs,'--device',args.device,
         '--batch-size',args.batch_size,'--feature-storage',args.feature_storage,
         '--precision',args.precision,'--log-every',args.log_every,*extras)
     if args.evaluate_test:
-        index = run('extract_siglip_features.py','--manifest',split_dir/'test.json',
+        index = run('experiments.extract_siglip_features','--manifest',split_dir/'test.json',
             '--ocid-root',args.ocid_root,'--model',args.model,'--output',args.features,
             '--chunk-size',args.chunk_size,'--device',args.device,find_index=True)
-        run('evaluate_experiment1.py','--features',index,'--checkpoint',args.output/'best.pt',
+        run('experiments.evaluate_experiment1','--features',index,'--checkpoint',args.output/'best.pt',
             '--output',args.output/'test.json','--device',args.device)
-        run('evaluate_experiment1.py','--features',index,'--zero-shot',
+        run('experiments.evaluate_experiment1','--features',index,'--zero-shot',
             '--output',args.output/'test-similarity.json','--device',args.device)
 
 

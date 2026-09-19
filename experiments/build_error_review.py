@@ -135,7 +135,7 @@ def main():
                     selection='Round-robin across shuffled sequence groups; random distinct scenes; one random error per scene',
                     caveat='Diversity-focused error sample, not representative error frequencies or a new accuracy estimate.', **stats)
     payload = json.dumps(dict(metadata=metadata, cases=cases), ensure_ascii=True).replace('<', '\\u003c')
-    template = (Path(__file__).parent / 'templates' / 'error_review_template.html').read_text()
+    template = (Path(__file__).resolve().parents[1] / 'templates' / 'error_review_template.html').read_text()
     if template.count('__REVIEW_DATA__') != 1:
         raise ValueError('Invalid review template')
     args.output.mkdir(parents=True)

@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import torch
-from run_sam_adaptation import check_indexes, training_rows, positive_loss, evaluate
+from experiments.run_sam_adaptation import check_indexes, training_rows, positive_loss, evaluate
 
 
 class AdaptationTests(unittest.TestCase):

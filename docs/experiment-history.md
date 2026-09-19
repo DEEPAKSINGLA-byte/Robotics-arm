@@ -6,9 +6,9 @@ See "Training the candidate selector" below for commands and measured checks.
 
 ## Current Files
 
-- `phase1_dataset.py`: creates and validates one ground-truth expression-mask
+- `bin_grasp/dataset.py`: creates and validates one ground-truth expression-mask
   pair at a time.
-- `phase2_experiment1.py`: creates every perfect candidate mask in a scene for
+- `bin_grasp/candidates.py`: creates every perfect candidate mask in a scene for
   oracle-candidate language grounding.
 - `verification_results.json`: compact Phase 1 verification results.
 - `requirements.txt`: minimal Python packages.
@@ -337,7 +337,7 @@ scene or sequence before training.
 The split comparison is reproduced without writing files:
 
 ```text
-python3 phase1_dataset.py --check-splits \
+python3 -m bin_grasp.dataset --check-splits \
   /path/to/annotations/train_expressions.json \
   /path/to/annotations/val_expressions.json \
   /path/to/annotations/test_expressions.json
@@ -348,7 +348,7 @@ python3 phase1_dataset.py --check-splits \
 From a terminal:
 
 ```text
-python3 phase1_dataset.py \
+python3 -m bin_grasp.dataset \
   --annotations /path/to/annotations/train_expressions.json \
   --ocid-root /path/to/OCID-dataset \
   --inspect-sample 83152
@@ -359,7 +359,7 @@ This prints tensor shapes and metrics but writes no files.
 ## Running a Storage-Free Audit
 
 ```text
-python3 phase1_dataset.py \
+python3 -m bin_grasp.dataset \
   --annotations /path/to/annotations/train_expressions.json \
   --ocid-root /path/to/OCID-dataset \
   --audit 500 \
@@ -375,7 +375,7 @@ To preserve only a small summary, add:
 ## Using the Dataset During Training
 
 ```python
-from phase1_dataset import OCIDRefDataset, make_dataloader
+from bin_grasp.dataset import OCIDRefDataset, make_dataloader
 
 dataset = OCIDRefDataset(
     "/path/to/annotations/train_expressions.json",
@@ -439,7 +439,7 @@ language grounding.
 
 ## Phase 2 Experiment 1: Oracle-Candidate Grounding
 
-`phase2_experiment1.py` implements the storage-efficient data interface for the
+`bin_grasp/candidates.py` implements the storage-efficient data interface for the
 first experiment:
 
 ```text
@@ -479,7 +479,7 @@ Run a single-sample check:
 
 ```text
 # Run from the repository folder.
-python3 phase2_experiment1.py \
+python3 -m bin_grasp.candidates \
   --annotations /path/to/annotations/train_expressions.json \
   --ocid-root /path/to/OCID-dataset \
   --inspect-sample 83152
@@ -488,7 +488,7 @@ python3 phase2_experiment1.py \
 Run a RAM-only interface audit:
 
 ```text
-python3 phase2_experiment1.py \
+python3 -m bin_grasp.candidates \
   --annotations /path/to/annotations/train_expressions.json \
   --ocid-root /path/to/OCID-dataset \
   --audit 100 \
@@ -510,7 +510,7 @@ grounding score, so segmentation failures can be measured separately from
 language-grounding failures.
 
 Update: the first RGB-only predicted-mask diagnostic is now implemented in
-`run_experiment2.py`. See "Experiment 2: automatic masks" at the end of this README.
+`experiments/run_experiment2.py`. See "Experiment 2: automatic masks" at the end of this README.
 
 ## Maintenance Rule
 
@@ -531,15 +531,15 @@ The new files are:
 
 | File | What it does |
 | --- | --- |
-| `prepare_splits.py` | Separates examples for training and evaluation |
-| `extract_siglip_features.py` | Reads USB images and saves compact frozen features |
-| `grounding_data.py` | Loads features and handles different candidate counts |
-| `grounding_model.py` | Compares objects with the sentence and scores candidates |
-| `train_experiment1.py` | Runs the small learning check or normal training |
-| `evaluate_experiment1.py` | Measures accuracy and saves candidate predictions |
-| `test_grounding.py` | Checks padding, order independence, and split safety |
-| `run_stage1.py` | Runs full extraction and training with one command |
-| `run_regularization_study.py` | Compares fresh baseline, stronger dropout, and narrower selector |
+| `experiments/prepare_splits.py` | Separates examples for training and evaluation |
+| `experiments/extract_siglip_features.py` | Reads USB images and saves compact frozen features |
+| `bin_grasp/data.py` | Loads features and handles different candidate counts |
+| `bin_grasp/model.py` | Compares objects with the sentence and scores candidates |
+| `experiments/train_experiment1.py` | Runs the small learning check or normal training |
+| `experiments/evaluate_experiment1.py` | Measures accuracy and saves candidate predictions |
+| `tests/test_grounding.py` | Checks padding, order independence, and split safety |
+| `experiments/run_stage1.py` | Runs full extraction and training with one command |
+| `experiments/run_regularization_study.py` | Compares fresh baseline, stronger dropout, and narrower selector |
 
 ### What the model sees
 
@@ -618,9 +618,9 @@ The code accepts both the tensor output in Transformers 4 and the structured
 ### 1. Prepare the two experiments
 
 ```bash
-python3 prepare_splits.py --annotations-dir /path/to/annotations \
+python3 -m experiments.prepare_splits --annotations-dir /path/to/annotations \
   --mode official --output splits/official
-python3 prepare_splits.py --annotations-dir /path/to/annotations \
+python3 -m experiments.prepare_splits --annotations-dir /path/to/annotations \
   --mode sequence --output splits/sequence
 ```
 
@@ -640,7 +640,7 @@ Keep the sequence test set untouched until training choices are finalized.
 ### 2. Extract features for the 100-example learning check
 
 ```bash
-python3 extract_siglip_features.py --manifest splits/sequence/train.json \
+python3 -m experiments.extract_siglip_features --manifest splits/sequence/train.json \
   --ocid-root /path/to/OCID-dataset \
   --output features --limit 100 --seed 42
 ```
@@ -660,7 +660,7 @@ choose a new feature output directory explicitly if source images change.
 Replace `/absolute/path/to/feature-index.json` with the printed path:
 
 ```bash
-python3 train_experiment1.py \
+python3 -m experiments.train_experiment1 \
   --train-features /absolute/path/to/feature-index.json \
   --overfit --epochs 200 --lr 0.001 --output runs/overfit100
 ```
@@ -677,7 +677,7 @@ The simplest command, after the 100-example check passes, is:
 
 ```bash
 # Run from the repository folder.
-python3 run_stage1.py --mode sequence --output runs/sequence-stage1
+python3 -m experiments.run_stage1 --mode sequence --output runs/sequence-stage1
 ```
 
 This extracts every training and validation expression and trains up to 30
@@ -692,16 +692,16 @@ To run the individual steps instead:
 Extract all training and validation expressions by omitting `--limit`:
 
 ```bash
-python3 extract_siglip_features.py --manifest splits/sequence/train.json \
+python3 -m experiments.extract_siglip_features --manifest splits/sequence/train.json \
   --ocid-root /path/to/OCID-dataset --output features
-python3 extract_siglip_features.py --manifest splits/sequence/val.json \
+python3 -m experiments.extract_siglip_features --manifest splits/sequence/val.json \
   --ocid-root /path/to/OCID-dataset --output features
 ```
 
 Use the two newly printed index paths:
 
 ```bash
-python3 train_experiment1.py --train-features /absolute/path/to/train-index.json \
+python3 -m experiments.train_experiment1 --train-features /absolute/path/to/train-index.json \
   --val-features /absolute/path/to/val-index.json \
   --epochs 30 --batch-size 256 --output runs/sequence-stage1
 ```
@@ -718,7 +718,7 @@ Extract the test split with the same feature command and `splits/sequence/test.j
 Then use its printed feature index:
 
 ```bash
-python3 evaluate_experiment1.py --features /absolute/path/to/test-index.json \
+python3 -m experiments.evaluate_experiment1 --features /absolute/path/to/test-index.json \
   --checkpoint runs/sequence-stage1/best.pt --output runs/sequence-test.json
 ```
 
@@ -726,7 +726,7 @@ For a useful comparison, score the same candidates using frozen SigLIP
 similarity alone:
 
 ```bash
-python3 evaluate_experiment1.py --features /absolute/path/to/test-index.json \
+python3 -m experiments.evaluate_experiment1 --features /absolute/path/to/test-index.json \
   --zero-shot --output runs/sequence-test-similarity.json
 ```
 
@@ -863,7 +863,7 @@ Your features are already extracted; this command reuses them:
 
 ```bash
 # Run from the repository folder.
-python3 run_stage1.py --mode sequence --output runs/sequence-stage1-fast \
+python3 -m experiments.run_stage1 --mode sequence --output runs/sequence-stage1-fast \
   --epochs 30 --batch-size 256 --log-every 50 \
   --init-checkpoint runs/speed-check/best.pt
 ```
@@ -878,7 +878,7 @@ checkpoint you saved before stopping. Omit `--init-checkpoint` for a new model.
 To skip even the cached-feature checks and start training directly:
 
 ```bash
-python3 train_experiment1.py \
+python3 -m experiments.train_experiment1 \
   --train-features features/4764b544cec72bc7/sequence-train-bd9c96bbe427.json \
   --val-features features/4764b544cec72bc7/sequence-val-5f243509242f.json \
   --output runs/sequence-stage1-fast --epochs 30 --batch-size 256 \
@@ -930,13 +930,13 @@ To repeat all three trials, choose a NEW output directory:
 
 ```bash
 # Run from the repository folder.
-python3 run_regularization_study.py \
+python3 -m experiments.run_regularization_study \
   --train-features features/4764b544cec72bc7/sequence-train-bd9c96bbe427.json \
   --val-features features/4764b544cec72bc7/sequence-val-5f243509242f.json \
   --output runs/regularization-study-repeat
 ```
 
-To configure one fresh run, `train_experiment1.py` and `run_stage1.py` now accept
+To configure one fresh run, `experiments/train_experiment1.py` and `experiments/run_stage1.py` now accept
 `--hidden 128`, `--layers 2`, `--dropout 0.3`, and `--report-training-fit`.
 Use one change at a time for an interpretable comparison. Omit
 `--init-checkpoint` when changing the architecture or dropout; incompatible
@@ -1022,7 +1022,7 @@ To generate another report, with the USB drive connected, choose a fresh output:
 
 ```bash
 # Run from the repository folder.
-python3 build_error_review.py \
+python3 -m experiments.build_error_review \
   --features features/4764b544cec72bc7/sequence-val-5f243509242f.json \
   --predictions runs/regularization-study/baseline/reloaded-validation.predictions.jsonl \
   --ocid-root /path/to/OCID-dataset \
@@ -1034,13 +1034,13 @@ target IDs, candidate-index mapping, image dimensions, and nonempty masks. The
 original images and labels are never changed. Only the selected 50 RGB images
 are embedded unmodified in the output; mask boundaries are drawn in the browser.
 Generated reports under `runs/` are ignored by Git. Commit the generator,
-`error_review_template.html`, and `test_error_review.py`, not dataset images or
+`error_review_template.html`, and `tests/test_error_review.py`, not dataset images or
 personal review notes. Three new tests cover repeatable distinct-scene selection,
 balanced groups, invalid inputs, and exact mask boundaries.
 
 ## Experiment 2: automatic masks
 
-`run_experiment2.py` connects the local SAM 2.1 Tiny model to frozen SigLIP and
+`experiments/run_experiment2.py` connects the local SAM 2.1 Tiny model to frozen SigLIP and
 the existing relation selector. It performs inference only; it does not update
 any model weights. The dataset's perfect masks are no longer prediction inputs.
 
@@ -1071,7 +1071,7 @@ From the repository, choose a fresh output directory:
 
 ```bash
 # Run from the repository folder.
-HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 python3 run_experiment2.py \
+HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 python3 -m experiments.run_experiment2 \
   --count 20 --output runs/experiment2-sam21-tiny-repeat
 ```
 

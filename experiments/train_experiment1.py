@@ -7,9 +7,9 @@ import time
 from pathlib import Path
 import numpy as np
 import torch
-from grounding_data import FeatureDataset, ResidentFeatures, verify_pair
-from grounding_model import GroundingModel
-from evaluate_experiment1 import evaluate
+from bin_grasp.data import FeatureDataset, ResidentFeatures, verify_pair
+from bin_grasp.model import GroundingModel
+from experiments.evaluate_experiment1 import evaluate
 
 
 def sync(device):

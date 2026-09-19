@@ -6,8 +6,8 @@ from pathlib import Path
 import subprocess
 import sys
 
-from compare_sam_selectors import remaining_index
-from run_experiment2 import select_rows, save_json, file_hash
+from experiments.compare_sam_selectors import remaining_index
+from experiments.run_experiment2 import select_rows, save_json, file_hash
 
 
 VARIANTS = {
@@ -85,7 +85,7 @@ def main():
     env = dict(os.environ, HF_HUB_OFFLINE='1', TRANSFORMERS_OFFLINE='1')
     for name, overrides in variants.items():
         print(f'=== SAM settings: {name} ===', flush=True)
-        subprocess.run([sys.executable, '-B', str(Path(__file__).with_name('run_experiment2.py')),
+        subprocess.run([sys.executable, '-B', '-m', 'experiments.run_experiment2',
             '--val-features', str(manifest), '--checkpoint', str(args.adapted_run/'best.pt'),
             '--count', str(args.count), '--seed', str(args.seed), '--output', str(args.output/name),
             '--sam', source['sam_path'], '--siglip', source['siglip_path'], '--ocid-root', source['ocid_root'],

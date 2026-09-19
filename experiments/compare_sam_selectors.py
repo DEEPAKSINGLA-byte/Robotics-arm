@@ -7,7 +7,7 @@ import sys
 
 import numpy as np
 
-from run_experiment2 import load_proposals, save_json
+from experiments.run_experiment2 import load_proposals, save_json
 
 
 def remaining_index(index, used):
@@ -55,7 +55,7 @@ def main():
     filtering = preparation['filtering']
     for name, checkpoint in checkpoints.items():
         print(f'Running {name} selector on {count} remaining validation images...', flush=True)
-        subprocess.run([sys.executable, '-B', str(Path(__file__).with_name('run_experiment2.py')),
+        subprocess.run([sys.executable, '-B', '-m', 'experiments.run_experiment2',
                         '--val-features', str(manifest), '--checkpoint', str(checkpoint),
                         '--count', str(count), '--seed', str(args.seed), '--output', str(args.output/name),
                         '--sam', original_settings['sam_path'], '--siglip', original_settings['siglip_path'],

@@ -8,8 +8,8 @@ from unittest.mock import patch
 import numpy as np
 from PIL import Image
 
-from run_task3 import REPO, load_config
-from verify_task3 import verify
+from bin_grasp.pipeline import REPO, load_config
+from bin_grasp.verify import verify
 
 
 class RunnerChecks(unittest.TestCase):
@@ -22,12 +22,12 @@ class RunnerChecks(unittest.TestCase):
     def test_absolute_model_paths_are_kept(self):
         keys = ('checkpoint', 'sam_path', 'siglip_path', 'depth_head', 'moge_checkpoint')
         values = {key: '/tmp/task3-test-model' for key in keys}
-        with patch('run_task3.read', return_value=values):
+        with patch('bin_grasp.pipeline.read', return_value=values):
             config = load_config('unused.json')
         self.assertTrue(all(config[key] == '/tmp/task3-test-model' for key in keys))
 
     def test_verification_rejects_test_manifest(self):
-        with patch('verify_task3.read', return_value={'split': 'test', 'mode': 'sequence'}):
+        with patch('bin_grasp.verify.read', return_value={'split': 'test', 'mode': 'sequence'}):
             with self.assertRaisesRegex(ValueError, 'validation'):
                 verify([], Path('/tmp'), 'unused.json')
 

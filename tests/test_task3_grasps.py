@@ -2,7 +2,7 @@
 import unittest
 import numpy as np
 from scipy.spatial import cKDTree
-from task3_grasp_proposals import (GraspConfig, propose, project, tool_rotation,
+from bin_grasp.grasps import (GraspConfig, propose, project, tool_rotation,
                                    validate_transform, observed_collision_count)
 
 

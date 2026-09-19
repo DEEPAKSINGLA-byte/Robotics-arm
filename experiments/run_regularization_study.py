@@ -24,7 +24,7 @@ def main():
     for name,width,dropout in variants:
         directory=args.output/name
         print(f'\nStarting {name}: width={width}, dropout={dropout}',flush=True)
-        subprocess.run([sys.executable,'-B',str(Path(__file__).parent/'train_experiment1.py'),
+        subprocess.run([sys.executable,'-B','-m','experiments.train_experiment1',
             '--train-features',str(args.train_features),'--val-features',str(args.val_features),
             '--output',str(directory),'--seed',str(args.seed),'--epochs',str(args.epochs),
             '--patience',str(args.patience),'--hidden',str(width),'--dropout',str(dropout),

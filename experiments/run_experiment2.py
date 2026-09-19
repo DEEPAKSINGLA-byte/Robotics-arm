@@ -16,11 +16,11 @@ import transformers
 from transformers import AutoModel, AutoProcessor, pipeline
 from transformers.pipelines.mask_generation import MaskGenerationPipeline
 
-from build_error_review import inside, outline
-from extract_siglip_features import encoder_fingerprint, pooled
-from grounding_model import GroundingModel
-from candidate_inputs import candidate_inputs
-from experiment_io import file_hash, save_json
+from experiments.build_error_review import inside, outline
+from experiments.extract_siglip_features import encoder_fingerprint, pooled
+from bin_grasp.model import GroundingModel
+from bin_grasp.candidates import candidate_inputs
+from bin_grasp.io import file_hash, save_json
 
 
 def tiled_boxes(width, height):
@@ -357,7 +357,7 @@ def main():
     summary['conditional_selection_success'] = summary['selected_success_count']/available if available else None
     save_json(args.output/'evaluation.json', predictions)
     save_json(args.output/'summary.json', summary)
-    html = (Path(__file__).parent / 'templates' / 'experiment2_report_template.html').read_text()
+    html = (Path(__file__).resolve().parents[1] / 'templates' / 'experiment2_report_template.html').read_text()
     payload = json.dumps(dict(summary=summary,settings=provenance,cases=cases),allow_nan=False).replace('<','\\u003c')
     (args.output/'report.html').write_text(html.replace('__EXPERIMENT_DATA__',payload))
     print(json.dumps(summary,indent=2),flush=True)

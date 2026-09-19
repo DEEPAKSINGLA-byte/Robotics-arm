@@ -11,9 +11,9 @@ import torch.nn.functional as F
 from PIL import Image
 from transformers import AutoModel, AutoProcessor
 
-from phase1_dataset import resolve_paths
-from candidate_inputs import candidate_inputs
-from prepare_splits import digest
+from bin_grasp.dataset import resolve_paths
+from bin_grasp.candidates import candidate_inputs
+from experiments.prepare_splits import digest
 
 
 def pooled(output):

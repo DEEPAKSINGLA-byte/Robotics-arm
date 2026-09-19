@@ -8,8 +8,8 @@ from pathlib import Path
 import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
-from grounding_data import FeatureDataset, collate
-from grounding_model import GroundingModel
+from bin_grasp.data import FeatureDataset, collate
+from bin_grasp.model import GroundingModel
 
 
 @torch.no_grad()

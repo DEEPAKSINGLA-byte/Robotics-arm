@@ -17,7 +17,7 @@ Run from the repository root with the USB dataset connected:
 
 ```bash
 # Run from the repository folder.
-HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 python3 -B run_sam_adaptation.py prepare \
+HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 python3 -B -m experiments.run_sam_adaptation prepare \
   --train-scenes 300 --expressions-per-scene 20 \
   --output features/sam-adaptation-300
 ```
@@ -44,7 +44,7 @@ keep the partial folder until you decide whether to archive it.
 After preparation completes:
 
 ```bash
-HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 python3 -B run_sam_adaptation.py train \
+HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 python3 -B -m experiments.run_sam_adaptation train \
   --data features/sam-adaptation-300 \
   --epochs 20 --batch-size 64 --lr 0.00003 \
   --output runs/sam-adaptation-300
@@ -80,7 +80,7 @@ stops after five non-improving epochs by default.
 Outputs include `baseline.json`, `baseline_predictions.json`, `history.json`,
 `best.pt`, `best_metrics.json`, `best_predictions.json`, `settings.json` and
 `summary.json`. The new best checkpoint is also compatible with the existing
-`run_experiment2.py --checkpoint ...` report workflow.
+`experiments/run_experiment2.py --checkpoint ...` report workflow.
 
 This 100-image validation sample is now used for model selection: improvement
 on it is not independent evidence of generalization. Do not repeatedly tune

@@ -18,7 +18,7 @@ exclusion is recorded in the new cache and propagated to trained checkpoints.
 
 ```bash
 # Run from the repository folder.
-models/moge/.venv/bin/python -B run_depth_scale.py prepare \
+models/moge/.venv/bin/python -B -m bin_grasp.depth prepare \
   --data-root /path/to/recovered-ocid \
   --exclude-train-scene ARID20/table/top/seq12/rgb/result_2018-08-21-17-01-40.png \
   --output features/depth-scale-ssd-v1
@@ -35,7 +35,7 @@ Connect the OCID USB dataset. Use the existing MoGe environment, not a new insta
 
 ```bash
 # Run from the repository folder.
-models/moge/.venv/bin/python -B run_depth_scale.py prepare \
+models/moge/.venv/bin/python -B -m bin_grasp.depth prepare \
   --output features/depth-scale-v1
 ```
 
@@ -60,7 +60,7 @@ cache folder. `--limit 4` is available for setup tests, not meaningful evaluatio
 ## Train the small correction network
 
 ```bash
-models/moge/.venv/bin/python -B run_depth_scale.py train \
+models/moge/.venv/bin/python -B -m bin_grasp.depth train \
   --data features/depth-scale-v1 \
   --epochs 50 --batch-size 64 --lr 0.0003 \
   --output runs/depth-scale-v1
@@ -92,7 +92,7 @@ does not evaluate it or claim that it is untouched.
 Replace `/absolute/path/image.png` with the image to process:
 
 ```bash
-models/moge/.venv/bin/python -B run_depth_scale.py predict \
+models/moge/.venv/bin/python -B -m bin_grasp.depth predict \
   --head runs/depth-scale-v1/best.pt \
   --image /absolute/path/image.png \
   --output runs/depth-scale-one-image
@@ -107,7 +107,7 @@ grounding pipeline is automatically switched to this experimental head.
 ## Setup tests
 
 ```bash
-models/moge/.venv/bin/python -B -m unittest test_depth_scale
+models/moge/.venv/bin/python -B -m unittest tests.test_depth_scale
 ```
 
 An answer-assisted scale diagnostic can motivate this experiment but is not its

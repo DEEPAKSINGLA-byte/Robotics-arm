@@ -1,6 +1,6 @@
 import unittest
-from prepare_splits import digest
-from evaluate_final_test import aggregate, verify_test_split
+from experiments.prepare_splits import digest
+from experiments.evaluate_final_test import aggregate, verify_test_split
 
 
 class FinalTestTests(unittest.TestCase):

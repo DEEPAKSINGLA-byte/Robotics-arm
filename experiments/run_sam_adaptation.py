@@ -12,12 +12,12 @@ from PIL import Image
 import torch
 from transformers import AutoModel, AutoProcessor, pipeline
 
-from build_error_review import inside
-from candidate_inputs import candidate_inputs
-from extract_siglip_features import encoder_fingerprint, pooled
-from grounding_data import collate
-from grounding_model import GroundingModel
-from run_experiment2 import (StableMaskGenerationPipeline, file_hash, filter_proposals,
+from experiments.build_error_review import inside
+from bin_grasp.candidates import candidate_inputs
+from experiments.extract_siglip_features import encoder_fingerprint, pooled
+from bin_grasp.data import collate
+from bin_grasp.model import GroundingModel
+from experiments.run_experiment2 import (StableMaskGenerationPipeline, file_hash, filter_proposals,
                              load_proposals, mask_ious, save_json, validate_checkpoint)
 
 

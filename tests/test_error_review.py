@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from build_error_review import select_errors, outline, inside
+from experiments.build_error_review import select_errors, outline, inside
 from pathlib import Path
 
 

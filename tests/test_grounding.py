@@ -1,11 +1,11 @@
 """Checks for padding, candidate order, leakage boundaries, and sequence splits."""
 import unittest
 import torch
-from grounding_model import GroundingModel
-from grounding_data import collate, verify_pair, ResidentFeatures
-from evaluate_experiment1 import evaluate
-from train_experiment1 import resolve_model_config
-from prepare_splits import make_splits
+from bin_grasp.model import GroundingModel
+from bin_grasp.data import collate, verify_pair, ResidentFeatures
+from experiments.evaluate_experiment1 import evaluate
+from experiments.train_experiment1 import resolve_model_config
+from experiments.prepare_splits import make_splits
 from types import SimpleNamespace
 
 

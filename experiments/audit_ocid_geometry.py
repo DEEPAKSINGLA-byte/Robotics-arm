@@ -11,9 +11,9 @@ import random
 
 import numpy as np
 from PIL import Image
-from build_error_review import inside
-from camera_geometry import Camera, project_points
-from run_experiment2 import file_hash, save_json
+from experiments.build_error_review import inside
+from bin_grasp.geometry import Camera, project_points
+from experiments.run_experiment2 import file_hash, save_json
 
 
 def read_pcd(path):

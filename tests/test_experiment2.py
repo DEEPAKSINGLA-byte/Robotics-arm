@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 import numpy as np
 import torch
-from run_experiment2 import select_rows, validate_checkpoint, filter_proposals, prepare_candidates, summarize_evaluation, StableMaskGenerationPipeline, MaskGenerationPipeline
+from experiments.run_experiment2 import select_rows, validate_checkpoint, filter_proposals, prepare_candidates, summarize_evaluation, StableMaskGenerationPipeline, MaskGenerationPipeline
 
 
 class Experiment2Tests(unittest.TestCase):

@@ -10,9 +10,9 @@ import numpy as np
 from PIL import Image
 import torch
 from torch import nn
-from experiment_io import file_hash as sha, save_json as _save_json
+from bin_grasp.io import file_hash as sha, save_json as _save_json
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[1]
 DATA = str(ROOT / 'data/OCID-dataset')
 VERSION = 1
 

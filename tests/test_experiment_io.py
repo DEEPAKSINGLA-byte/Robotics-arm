@@ -4,7 +4,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from experiment_io import file_hash, save_json
+from bin_grasp.io import file_hash, save_json
 
 
 class ExperimentIOTests(unittest.TestCase):
@@ -37,8 +37,8 @@ class ExperimentIOTests(unittest.TestCase):
                 self.assertEqual(path.read_text(), '{"valid": true}')
 
     def test_compatibility_imports(self):
-        from run_experiment2 import file_hash as legacy_hash, save_json as legacy_save
-        from run_depth_scale import sha
+        from experiments.run_experiment2 import file_hash as legacy_hash, save_json as legacy_save
+        from bin_grasp.depth import sha
         self.assertIs(legacy_hash, file_hash)
         self.assertIs(legacy_save, save_json)
         self.assertIs(sha, file_hash)

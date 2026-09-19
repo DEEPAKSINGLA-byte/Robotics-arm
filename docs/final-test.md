@@ -34,14 +34,14 @@ outputs, use a new nonexistent output name and `--check-only`:
 
 ```bash
 # Run from the repository folder.
-HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 python3 -B evaluate_final_test.py \
+HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 python3 -B -m experiments.evaluate_final_test \
   --output runs/final-test-preflight --check-only
 ```
 
 The evaluation command itself is:
 
 ```bash
-HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 python3 -B evaluate_final_test.py \
+HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 python3 -B -m experiments.evaluate_final_test \
   --output runs/final-test-relaxed
 ```
 
